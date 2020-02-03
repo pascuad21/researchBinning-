@@ -10,11 +10,18 @@ Date: 1/31/2020
 
 public class biningAlgorythm{
     public static void main(String[] args){
-        System.out.println("Useage: <file name> <steepness> <number of Curves> <overflow decimal> <number of points>");
+        if(args.length < 5){
+            System.out.println("Useage: <file name> <steepness> <number of Curves> <overflow decimal> <number of points>");
+            System.exit(0);
+        }
         int steepness = Integer.parseInt(args[1]);
         int numCurves = Integer.parseInt(args[2]);
         double overflow = Double.parseDouble(args[3]);
         int numPoints = Integer.parseInt(args[4]);
+        double MIN = 0.0;
+        double MAX = 10.0;  //currently hard coded, could change in the future. 
+        double range = MAX/numCurves; //this divided the number of points evenly by the number of curves
+        double numbers[] = new double[numPoints]; //creates an array the size the user wanted
 
         //creates the file that we will be writing to.
         File file = null; 
@@ -29,15 +36,33 @@ public class biningAlgorythm{
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
+        
+        //MULTIPLE CURVES FUNTIONALITY 
+        //this will keep generating numbers in a bell curve based on the 
+        //min an max of a range. 
+        double start = 0.0; //the min for the rand num generator 
+        int j = 0; //to keep track of the location in the array
+        while(start < MAX){
+            int w = 0;
+            //divided the number of points evenly based on the range
+            while(w < numPoints/numCurves){
+                numbers[j] = randNumGenerator(start, start + range);
+                j++;
+                w++;
+            }
+            start = start + range;
+        }
 
 
         //FOR TESTING
-        int w = 0;
-        double numbers[] = new double[200];
-        while(w < 200){
-             numbers[w] = randNumGenerator(0,10); 
-             w++;
-        }
+            // int w = 0;
+            // double numbers[] = new double[200];
+            // while(w < 200){
+            //     numbers[w] = randNumGenerator(0,10); 
+            //     w++;
+            // }
+
+        
 
         String data = "";
         for(int i = 0; i < numbers.length; i++){
@@ -76,6 +101,39 @@ public class biningAlgorythm{
         num *= max - min; // Stretch to fill range
         num += min; // offset to min
         return num;
+    }
+
+    public void binning(double numbers[]){
+
+        ArrayList<ArrayList <Double>> bins = new ArrayList<>();
+
+        ArrayList<Double> firstBin = new ArrayList<>();
+        ArrayList<Double> secondBin = new ArrayList<>();
+        bins.add(firstBin);
+        bins.add(secondBin);
+
+        int beginAvg = 0;
+
+        if(numbers.length >= 4){
+            for (int i = 0; i < 4; i++) {
+                beginAvg += numbers[i];
+            }
+            beginAvg = beginAvg/4;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if(numbers[i] < beginAvg){
+                bins.get(0).add(numbers[i]);
+            }
+            else if(numbers[i] > beginAvg){
+                bins.get(1).add(numbers[i]);
+            }
+        }
+
+        for (int i = 4; i < numbers.length; i++) {
+            
+        }
+
     }
 
 
