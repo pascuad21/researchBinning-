@@ -9,6 +9,13 @@ Date: 1/31/2020
 */
 
 public class biningAlgorythm{
+
+    static ArrayList<ArrayList<Double>> bins = new ArrayList<>();
+    static ArrayList<Double> firstBin = new ArrayList<>();
+    static ArrayList<Double> secondBin = new ArrayList<>();
+    static ArrayList<Double> mins = new ArrayList<>();
+    static ArrayList<Double> maxs = new ArrayList<>();
+
     public static void main(String[] args){
         if(args.length < 5){
             System.out.println("Useage: <file name> <steepness> <number of Curves> <overflow decimal> <number of points>");
@@ -62,14 +69,30 @@ public class biningAlgorythm{
             //     w++;
             // }
 
-        
+        binning(numbers);
 
         String data = "";
-        for(int i = 0; i < numbers.length; i++){
-            data = data + " " + numbers[i] + "\n";  
+        for(int i = 0; i < bins.get(0).size(); i++){
+            data = data + " " + bins.get(0).get(i) + "\n";  
         }
+        // data = data + "CURVE 2";
+        // for(int i = 0; i < bins.get(1).size(); i++){
+        //     data = data + " " + bins.get(1).get(i) + "\n";  
+        // }
+        // data = data + "CURVE 3";
+        // for (int i = 0; i < bins.get(2).size(); i++) {
+        //     data = data + " " + bins.get(2).get(i) + "\n";
+        // }
+        // data = data + "CURVE 4";
+        // for (int i = 0; i < bins.get(3).size(); i++) {
+        //     data = data + " " + bins.get(3).get(i) + "\n";
+        // }
+        // data = data + "CURVE 5";
+        // for (int i = 0; i < bins.get(4).size(); i++) {
+        //     data = data + " " + bins.get(4).get(i) + "\n";
+        // }
 
-        //printing the date to the file
+        //printing the data to the file
         FileWriter fr = null;
         try{
             fr = new FileWriter(file);
@@ -103,25 +126,25 @@ public class biningAlgorythm{
         return num;
     }
 
-    public void binning(double numbers[]){
+    public static void binning(double numbers[]){
 
-        ArrayList<ArrayList <Double>> bins = new ArrayList<>();
-
-        ArrayList<Double> firstBin = new ArrayList<>();
-        ArrayList<Double> secondBin = new ArrayList<>();
+        double beginAvg = 0;
+        double difference = 0;
         bins.add(firstBin);
         bins.add(secondBin);
 
-        int beginAvg = 0;
-
         if(numbers.length >= 4){
-            for (int i = 0; i < 4; i++) {
+            for(int i = 0; i < 4; i++){
                 beginAvg += numbers[i];
             }
             beginAvg = beginAvg/4;
         }
+        else{
+            System.out.println("Number Array Size too Small to Bin");
+            return;
+        }
 
-        for (int i = 0; i < 4; i++) {
+        for(int i = 0; i < 4; i++){
             if(numbers[i] < beginAvg){
                 bins.get(0).add(numbers[i]);
             }
@@ -130,13 +153,64 @@ public class biningAlgorythm{
             }
         }
 
-        for (int i = 4; i < numbers.length; i++) {
-            
+        maxs.add(Collections.max(bins.get(0)));
+        maxs.add(Collections.max(bins.get(1)));
+        mins.add(Collections.min(bins.get(0)));
+        mins.add(Collections.min(bins.get(1)));
+        difference = mins.get(1) - maxs.get(0);
+
+        for(int i = 4; i < numbers.length; i++){
+            int whichBin = whichBin(numbers[i], difference);
+            recalculate();
+
+            if(whichBin == -1){
+                ArrayList<Double> newBin = new ArrayList<>();
+                newBin.add(numbers[i]);
+                mins.add(numbers[i]);
+                maxs.add(numbers[i]);
+                bins.add(newBin);
+            }
+            else{
+                bins.get(whichBin).add(numbers[i]);
+            }
         }
 
     }
 
+    public static int whichBin(double number, double difference){
 
+        for(int i = 0; i < bins.size(); i++){
+            // checking if number is in existing bins
+            if(number >= mins.get(i) && number <= maxs.get(i)){
+                return i;
+            }
+            // Within difference of original split on both ends of bin
+            else if(number <= maxs.get(i) + difference && number >= mins.get(i) - difference){
+                return i;
+            }
+            else if(bins.get(i).size() == 1){
+                return i;
+            }
+        }
+
+        // does not exist a bin in which the number can go into
+        return -1;
+
+    } 
+
+    public static void recalculate(){
+
+        for(int i = 0; i < bins.size(); i++){
+            if(bins.get(i).size() == 1){
+                continue;
+            }
+            else{
+                maxs.set(i,Collections.max(bins.get(i)));
+                mins.set(i, Collections.min(bins.get(i)));
+            }
+        }
+
+    }
 
 
 }
