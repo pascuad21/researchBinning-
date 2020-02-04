@@ -23,13 +23,13 @@ public class biningAlgorythm{
         }
         int steepness = Integer.parseInt(args[1]);
         int numCurves = Integer.parseInt(args[2]);
-        double overflow = Double.parseDouble(args[3]);
+        double overflowPercent = Double.parseDouble(args[3]);
         int numPoints = Integer.parseInt(args[4]);
         double MIN = 0.0;
         double MAX = 10.0;  //currently hard coded, could change in the future. 
         double range = MAX/numCurves; //this divided the number of points evenly by the number of curves
         double numbers[] = new double[numPoints]; //creates an array the size the user wanted
-
+        double overflow = (overflowPercent * range)/2; //this is to be added to the left and right of the bell curve 
         //creates the file that we will be writing to.
         File file = null; 
         try {
@@ -53,7 +53,24 @@ public class biningAlgorythm{
             int w = 0;
             //divided the number of points evenly based on the range
             while(w < numPoints/numCurves){
-                numbers[j] = randNumGenerator(start, start + range);
+
+                //OVERFLOW FUNCTIONALITY 
+                //CURRENTLY NOT THE BEST
+                if(start != 0.0 && (start + range) != MAX){
+                    //This adds in the overflow 
+                    System.out.println("overflow");
+                    numbers[j] = randNumGenerator(start- overflow, start + range + overflow);
+                }
+                else if ((start + range) >= MAX){
+                    //overflow for the end
+                    System.out.println("left overflow");
+                    numbers[j] = randNumGenerator(start - overflow, start + range);
+                }
+                else{
+                    //overflow for the beginning 
+                    System.out.println("right overflow");
+                    numbers[j] = randNumGenerator(start, start + range + overflow);
+                }
                 j++;
                 w++;
             }
@@ -69,12 +86,20 @@ public class biningAlgorythm{
             //     w++;
             // }
 
-        binning(numbers);
+        //binning(numbers);
 
         String data = "";
-        for(int i = 0; i < bins.get(0).size(); i++){
-            data = data + " " + bins.get(0).get(i) + "\n";  
+        //this prints out the data for the algorithm 
+        // for(int i = 0; i < bins.get(0).size(); i++){
+        //     data = data + " " + bins.get(0).get(i) + "\n";  
+        // }
+
+        //FOR TESTING THE GENERATOR 
+        for(int i = 0; i < numbers.length; i++){
+            data = data + " " + numbers[i] + "\n";  
         }
+
+
         // data = data + "CURVE 2";
         // for(int i = 0; i < bins.get(1).size(); i++){
         //     data = data + " " + bins.get(1).get(i) + "\n";  
