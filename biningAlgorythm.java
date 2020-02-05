@@ -98,10 +98,16 @@ public class biningAlgorythm{
         System.out.println(bins.size());
         //this prints out the data for the algorithm 
         for(int x = 0; x < bins.size(); x++){
+			data = data + " Bin: " + x + "\n";
             for(int i = 0; i < bins.get(x).size(); i++){
                 data = data + " " + bins.get(x).get(i) + "\n";  
             }
         }
+
+		for(int k = 0; k < maxs.size(); k++){
+			data = data + " Bin: " + k + "\n Max: " + maxs.get(k) + "\n";
+			data = data + " Min: " + mins.get(k) + "\n";
+		}
 
         // data = data + "CURVE 2";
         // for(int i = 0; i < bins.get(1).size(); i++){
