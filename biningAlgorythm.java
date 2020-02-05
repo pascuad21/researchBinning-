@@ -58,17 +58,17 @@ public class biningAlgorythm{
                 //CURRENTLY NOT THE BEST
                 if(start != 0.0 && (start + range) != MAX){
                     //This adds in the overflow 
-                    System.out.println("overflow");
+                    //System.out.println("overflow");
                     numbers[j] = randNumGenerator(start- overflow, start + range + overflow);
                 }
                 else if ((start + range) >= MAX){
                     //overflow for the end
-                    System.out.println("left overflow");
+                    //System.out.println("left overflow");
                     numbers[j] = randNumGenerator(start - overflow, start + range);
                 }
                 else{
                     //overflow for the beginning 
-                    System.out.println("right overflow");
+                    //System.out.println("right overflow");
                     numbers[j] = randNumGenerator(start, start + range + overflow);
                 }
                 j++;
@@ -85,20 +85,23 @@ public class biningAlgorythm{
             //     numbers[w] = randNumGenerator(0,10); 
             //     w++;
             // }
-
-        //binning(numbers);
-
-        String data = "";
-        //this prints out the data for the algorithm 
-        // for(int i = 0; i < bins.get(0).size(); i++){
-        //     data = data + " " + bins.get(0).get(i) + "\n";  
-        // }
-
-        //FOR TESTING THE GENERATOR 
-        for(int i = 0; i < numbers.length; i++){
-            data = data + " " + numbers[i] + "\n";  
+        
+        String data = "Raw Data \n";
+        // FOR TESTING THE GENERATOR
+        for (int i = 0; i < numbers.length; i++) {
+            data = data + " " + numbers[i] + "\n";
         }
+        data = data + "Binning Data \n";
+        Collections.shuffle(Arrays.asList(numbers));
+        binning(numbers);
 
+        System.out.println(bins.size());
+        //this prints out the data for the algorithm 
+        for(int x = 0; x < bins.size(); x++){
+            for(int i = 0; i < bins.get(x).size(); i++){
+                data = data + " " + bins.get(x).get(i) + "\n";  
+            }
+        }
 
         // data = data + "CURVE 2";
         // for(int i = 0; i < bins.get(1).size(); i++){
