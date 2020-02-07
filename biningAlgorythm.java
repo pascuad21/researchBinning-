@@ -21,6 +21,9 @@ public class biningAlgorythm{
             System.out.println("Useage: <file name> <steepness> <number of Curves> <overflow decimal> <number of points>");
             System.exit(0);
         }
+        else if(args.length == 6){ // Testing input
+
+        }
         int steepness = Integer.parseInt(args[1]);
         int numCurves = Integer.parseInt(args[2]);
         double overflowPercent = Double.parseDouble(args[3]);
@@ -91,8 +94,14 @@ public class biningAlgorythm{
         for (int i = 0; i < numbers.length; i++) {
             data = data + " " + numbers[i] + "\n";
         }
-        data = data + "Binning Data \n";
         Collections.shuffle(Arrays.asList(numbers));
+
+        data = data + "Shuffled Raw Data \n";
+        for (int i = 0; i < numbers.length; i++) {
+            data = data + " " + numbers[i] + "\n";
+        }
+
+        data = data + "Binning Data \n";
         binning(numbers);
 
         System.out.println(bins.size());
