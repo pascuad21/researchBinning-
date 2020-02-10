@@ -94,6 +94,7 @@ public class biningAlgorythm{
         for (int i = 0; i < numbers.length; i++) {
             data = data + " " + numbers[i] + "\n";
         }
+        
         Collections.shuffle(Arrays.asList(numbers));
 
         data = data + "Shuffled Raw Data \n";
@@ -222,21 +223,50 @@ public class biningAlgorythm{
 
     public static int whichBin(double number, double difference){
 
+        // Checking inner range
         for(int i = 0; i < bins.size(); i++){
             // checking if number is in existing bins
             if(number >= mins.get(i) && number <= maxs.get(i)){
+                System.out.println("Within inner range \n");
                 return i;
             }
-            // Within difference of original split on both ends of bin
-            else if(number <= maxs.get(i) + difference && number >= mins.get(i) - difference){
-                return i;
+        }
+        // Checking outer range
+        for(int j = 0; j < bins.size(); j++){
+            if(mins.get(j) - difference <= number){
+                if(j - 1 < 0){
+                    System.out.println("Error Check 1\n");
+                    continue;   
+                }
+                System.out.println("Made it into Min \n");
+                double closeness1 = number - maxs.get(j-1);
+                double closness2 = mins.get(j) - number;
+                if(closeness1 < closness2){
+                    return j-1;
+                }
+                else{
+                    return j;
+                }
             }
-            else if(bins.get(i).size() == 1){
-                return i;
+            if(maxs.get(j) + difference >= number){
+                if(j + 1 > bins.size()-1){
+                    System.out.println("Error Check 2 \n");
+                    continue;    
+                }
+                System.out.println("Made it into Max \n");
+                double closeness1 = number - maxs.get(j);
+                double closness2 = mins.get(j+1) - number;
+                if(closeness1 < closness2){
+                    return j;
+                }
+                else{
+                    return j+1;
+                }
             }
         }
 
         // does not exist a bin in which the number can go into
+        System.out.println("Making a new bin \n");
         return -1;
 
     } 
