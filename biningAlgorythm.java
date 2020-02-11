@@ -31,7 +31,7 @@ public class biningAlgorythm{
         double MIN = 0.0;
         double MAX = 10.0;  //currently hard coded, could change in the future. 
         double range = MAX/numCurves; //this divided the number of points evenly by the number of curves
-        double numbers[] = new double[numPoints]; //creates an array the size the user wanted
+        Double numbers[] = new Double[numPoints]; //creates an array the size the user wanted
         double overflow = (overflowPercent * range)/2; //this is to be added to the left and right of the bell curve 
         //creates the file that we will be writing to.
         File file = null; 
@@ -170,7 +170,7 @@ public class biningAlgorythm{
         return num;
     }
 
-    public static void binning(double numbers[]){
+    public static void binning(Double numbers[]){
 
         double beginAvg = 0;
         double difference = 0;
@@ -239,6 +239,9 @@ public class biningAlgorythm{
                     continue;   
                 }
                 System.out.println("Made it into Min \n");
+                //checks to see if it is within range of lower bin
+                if(maxs.get(j-1) + difference >= number){
+                System.out.println("Inbetween Lower \n");
                 double closeness1 = number - maxs.get(j-1);
                 double closness2 = mins.get(j) - number;
                 if(closeness1 < closness2){
@@ -248,12 +251,16 @@ public class biningAlgorythm{
                     return j;
                 }
             }
+            }
             if(maxs.get(j) + difference >= number){
                 if(j + 1 > bins.size()-1){
                     System.out.println("Error Check 2 \n");
                     continue;    
                 }
                 System.out.println("Made it into Max \n");
+                //checks to see if it is within range of upper bin
+                if(mins.get(j+1) - difference <= number){
+                System.out.println("Inbetween Upper \n");
                 double closeness1 = number - maxs.get(j);
                 double closness2 = mins.get(j+1) - number;
                 if(closeness1 < closness2){
@@ -262,6 +269,7 @@ public class biningAlgorythm{
                 else{
                     return j+1;
                 }
+            }
             }
         }
 
