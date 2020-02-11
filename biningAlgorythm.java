@@ -239,7 +239,7 @@ public class biningAlgorythm{
                     continue;   
                 }
                 System.out.println("Made it into Min \n");
-                //checks to see if it is within range of lower bin
+                //checks to see if it is within range of lower bin also
                 if(maxs.get(j-1) + difference >= number){
                 System.out.println("Inbetween Lower \n");
                 double closeness1 = number - maxs.get(j-1);
@@ -249,8 +249,12 @@ public class biningAlgorythm{
                 }
                 else{
                     return j;
+                   }
                 }
-            }
+                //if it is only within range of bin j
+                else{
+                    return j; 
+                }
             }
             if(maxs.get(j) + difference >= number){
                 if(j + 1 > bins.size()-1){
@@ -268,8 +272,12 @@ public class biningAlgorythm{
                 }
                 else{
                     return j+1;
+                  }
                 }
-            }
+                //if it is only within range of bin j
+                else{
+                    return j;
+                } 
             }
         }
 
