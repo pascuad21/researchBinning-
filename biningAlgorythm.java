@@ -233,14 +233,14 @@ public class biningAlgorythm{
         }
         // Checking outer range
         for(int j = 0; j < bins.size(); j++){
-            if(mins.get(j) - difference <= number){
+            if(mins.get(j) - difference <= number && number < mins.get(j)){  //I THINK I FOUND A PROBLEM IT ISNT BEING BOUNDED 
                 if(j - 1 < 0){
                     System.out.println("Error Check 1\n");
-                    continue;   
+                    return j;   
                 }
                 System.out.println("Made it into Min \n");
                 //checks to see if it is within range of lower bin also
-                if(maxs.get(j-1) + difference >= number){
+                if(maxs.get(j-1) + difference >= number && number > maxs.get(j-1)){
                 System.out.println("Inbetween Lower \n");
                 double closeness1 = number - maxs.get(j-1);
                 double closness2 = mins.get(j) - number;
@@ -256,14 +256,14 @@ public class biningAlgorythm{
                     return j; 
                 }
             }
-            if(maxs.get(j) + difference >= number){
-                if(j + 1 > bins.size()-1){
+            if(maxs.get(j) + difference >= number && number > maxs.get(j)){
+                if(j + 1 > bins.size()-1){   //THIS COULD POSSIBLY BE AN ERROR 
                     System.out.println("Error Check 2 \n");
-                    continue;    
+                    return j;    
                 }
                 System.out.println("Made it into Max \n");
                 //checks to see if it is within range of upper bin
-                if(mins.get(j+1) - difference <= number){
+                if(mins.get(j+1) - difference <= number && number < mins.get(j+1)){
                 System.out.println("Inbetween Upper \n");
                 double closeness1 = number - maxs.get(j);
                 double closness2 = mins.get(j+1) - number;
