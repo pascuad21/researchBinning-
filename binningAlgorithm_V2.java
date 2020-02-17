@@ -68,13 +68,13 @@ public class binningAlgorithm_V2{
     public static void binning(Double numbers[]){
 
         for(int i = 0; i < numbers.length; i++){
-
+            recalculate(); 
             //there is nothing left in the array 
             if(numbers[i] == null){
                 break; 
             }
 
-             //base case 
+             //base case, the frist number will make the first bin
             if(bins.size() == 0){
                 ArrayList<Double> newBin = new ArrayList<>();
                 newBin.add(numbers[i]);
@@ -82,6 +82,12 @@ public class binningAlgorithm_V2{
                 max.add(numbers[i]);
                 bins.add(newBin);
             }
+
+            //we need to wait for at least 6 values
+            if(bins.size == 1 && i < 6){
+                bins[1].add(numbers[i]);
+            }
+
 
 
         }
@@ -91,6 +97,20 @@ public class binningAlgorithm_V2{
 
     //the method that will determine whether or not we split the bins
     public static boolean split(Double num){
+        
+    }
+
+    public static void recalculate(){
+
+        for(int i = 0; i < bins.size(); i++){
+            if(bins.get(i).size() == 1){
+                continue;
+            }
+            else{
+                maxs.set(i,Collections.max(bins.get(i)));
+                mins.set(i, Collections.min(bins.get(i)));
+            }
+        }
 
     }
     
