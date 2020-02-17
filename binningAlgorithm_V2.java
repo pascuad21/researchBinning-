@@ -7,6 +7,9 @@ import java.util.*;
 
 public class binningAlgorithm_V2{
 
+    static ArrayList<ArrayList<Double>> bins = new ArrayList<>();
+    static ArrayList<Double> mins = new ArrayList<>();
+    static ArrayList<Double> maxs = new ArrayList<>();
 
     public static void main(String[] args){
         int MAXDATA = 1000; // can be subject to change 
@@ -17,18 +20,18 @@ public class binningAlgorithm_V2{
         }
 
         //Creating the file to write to 
-        // File outFile = null; 
-        // try{
-        //     outFile = new File(args[1]);
-        //     if (file.createNewFile()) {
-        //         System.out.println("File created: " + file.getName());
-        //       } else {
-        //         System.out.println("File already exists.");
-        //       }
-        // }catch(IOException e){
-        //     System.out.println("An error occurred.");
-        //     e.printStackTrace();
-        // }
+        File outFile = null; 
+        try{
+            outFile = new File(args[1]);
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+              } else {
+                System.out.println("File already exists.");
+              }
+        }catch(IOException e){
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
         
         //Opening the file to read from 
         File inFile = null;
@@ -58,6 +61,36 @@ public class binningAlgorithm_V2{
 
         
 
+
+    }
+
+    //the binning algorithm 
+    public static void binning(Double numbers[]){
+
+        for(int i = 0; i < numbers.length; i++){
+
+            //there is nothing left in the array 
+            if(numbers[i] == null){
+                break; 
+            }
+
+             //base case 
+            if(bins.size() == 0){
+                ArrayList<Double> newBin = new ArrayList<>();
+                newBin.add(numbers[i]);
+                mins.add(numbers[i]);
+                max.add(numbers[i]);
+                bins.add(newBin);
+            }
+
+
+        }
+
+
+    }
+
+    //the method that will determine whether or not we split the bins
+    public static boolean split(Double num){
 
     }
     
