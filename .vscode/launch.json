@@ -8,6 +8,10 @@
             "type": "java",
             "name": "Debug (Launch) - Current File",
             "request": "launch",
+            "args": [
+                "algorithm2test.txt",
+                "feb19_alg2.txt"
+            ],
             "mainClass": "${file}"
         },
         {

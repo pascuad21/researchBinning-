@@ -63,13 +63,10 @@ public class binningAlgorithm_V2 extends Bin{
 
         // Creating the file to write to
         File outFile = null;
-        FileWriter fr = null;
         try {
             outFile = new File(args[1]);
             if (outFile.createNewFile()) {
                 System.out.println("File created: " + outFile.getName());
-                fr = new FileWriter(outFile);
-                fr.write(data);
             } else {
                 System.out.println("File already exists.");
             }
@@ -188,19 +185,19 @@ public class binningAlgorithm_V2 extends Bin{
         Double avg = 0.0;
         int count = 0;
         for(int k = 0; k < bins.size(); k++){
-            avg += bins.get(k).total;
+            avg += bins.get(k).getTotal();
             count ++;
         }
         avg = avg/count;
 
         Bin bestBin = null;
         for(int j = 0; j < temp.size(); j++){
-            if(temp.get(j).total < currBin.total){
-                if(temp.get(j).total > avg){
+            if(temp.get(j).getTotal() < currBin.getTotal()){
+                if(temp.get(j).getTotal()> avg){
                     if(bestBin == null){
                         bestBin = temp.get(j);
                     }
-                    else if(temp.get(j).total < bestBin.total){
+                    else if(temp.get(j).getTotal() < bestBin.getTotal()){
                         bestBin = temp.get(j);
                     }
                 }
