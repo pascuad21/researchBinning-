@@ -5,11 +5,9 @@ import java.util.*;
     
 */
 
-public class binningAlgorithm_V2{
+public class binningAlgorithm_V2 extends Bin{
 
-    static ArrayList<ArrayList<Double>> bins = new ArrayList<>();
-    static ArrayList<Double> mins = new ArrayList<>();
-    static ArrayList<Double> maxs = new ArrayList<>();
+    ArrayList<Bin> bins = new ArrayList<>();
 
     public static void main(String[] args){
         int MAXDATA = 1000; // can be subject to change 
@@ -23,8 +21,8 @@ public class binningAlgorithm_V2{
         File outFile = null; 
         try{
             outFile = new File(args[1]);
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
+            if (outFile.createNewFile()) {
+                System.out.println("File created: " + outFile.getName());
               } else {
                 System.out.println("File already exists.");
               }
@@ -65,51 +63,98 @@ public class binningAlgorithm_V2{
     }
 
     //the binning algorithm 
-    public static void binning(Double numbers[]){
+    public void binning(Double numbers[]){
 
         for(int i = 0; i < numbers.length; i++){
-            recalculate(); 
+
             //there is nothing left in the array 
             if(numbers[i] == null){
                 break; 
             }
 
-             //base case, the frist number will make the first bin
+             //base case, the first number will make the first bin
             if(bins.size() == 0){
-                ArrayList<Double> newBin = new ArrayList<>();
-                newBin.add(numbers[i]);
-                mins.add(numbers[i]);
-                max.add(numbers[i]);
+                Bin newBin = new Bin(0.0, 0.0, numbers[i], numbers[i], numbers[i]);
                 bins.add(newBin);
+                continue;
             }
+
+            System.out.println("Size of Bin " + bins.get(0).getList().size());
 
             //we need to wait for at least 6 values
-            if(bins.size == 1 && i < 6){
-                bins[1].add(numbers[i]);
+            if(bins.size() == 1 && i < 6){
+                bins.get(0).addNum(numbers[i]);
+                continue;
+            }
+
+            //At this point we have 6 numbers in one bin
+
+            //adds the new number before deciding to split or not
+            boolean added = false;
+            for(int k = 0; k < bins.size(); k++){
+                if(numbers[i] > bins.get(k).getMin() && numbers[i] < bins.get(k).getMax()){
+                    bins.get(k).addNum(numbers[i]);
+                    added = true;
+                    break;
+                }
+            }
+
+            if(!added){
+                if(numbers[i] < bins.get(0).getMin()){
+                    bins.get(0).addNum(numbers[i]);
+                }
+                else{
+                    bins.get(bins.size()-1).addNum(numbers[i]);
+                }
             }
 
 
+            // start of binning process
+
+            recalculate(); // recalc mins and maxs
+            calcNM(); // (re)calc all n's and m's
+            // sort all bins
+            for (Bin bin : bins) {
+                bin.sort();
+            }
+
+            for(int j = 0; j < bins.size(); i++){
+                if(bins.get(j).getList().size() >= 6){
+                    determineSplit(j);
+                }
+            }
 
         }
 
 
     }
-
-    //the method that will determine whether or not we split the bins
-    public static boolean split(Double num){
-        
+    
+    public void calcNM(){
+        for(int i = 0; i < bins.size(); i++){
+            Bin currBin = bins.get(i);
+            Double avg = 0.0;
+            int dividend = 0;
+            for(int j = 0; i < currBin.getList().size(); i++){
+                avg += currBin.getList().get(j);
+                dividend++;
+            }
+            avg = avg/dividend;
+            currBin.setN(Math.abs(avg - currBin.getMin()));
+            currBin.setM(Math.abs(avg - currBin.getMax()));
+        }
     }
 
-    public static void recalculate(){
+    //the method that will determine whether or not we split the bin
+    public boolean determineSplit(int binIndex){
+        
+        return true;
+    }
+
+    //recalculates all the bins mins and maxs
+    public void recalculate(){
 
         for(int i = 0; i < bins.size(); i++){
-            if(bins.get(i).size() == 1){
-                continue;
-            }
-            else{
-                maxs.set(i,Collections.max(bins.get(i)));
-                mins.set(i, Collections.min(bins.get(i)));
-            }
+            bins.get(i).recalMinMax();
         }
 
     }
