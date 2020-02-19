@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Bin{
     Double n;
@@ -15,7 +16,7 @@ public class Bin{
         this.total = 0.0;
         this.min = 0.0;
         this.max = 0.0;
-        numbers = null;
+        numbers = new ArrayList<Double>();
     }
 
     public Bin(Double n, Double m, Double min, Double max, Double num){
@@ -23,6 +24,7 @@ public class Bin{
         this.m = m;
         this.min = min;
         this.max = max;
+        numbers = new ArrayList<Double>();
         numbers.add(num);
         this.total = n + m;
     }
@@ -74,6 +76,12 @@ public class Bin{
 
     public void setMax(Double max){
         this.max = max;
+    }
+
+    public void setList(List<Double> nums){
+        for(int i = 0; i < nums.size(); i++){
+            addNum(nums.get(i));
+        }
     }
 
     //Other methods

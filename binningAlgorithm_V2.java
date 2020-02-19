@@ -7,7 +7,7 @@ import java.util.*;
 
 public class binningAlgorithm_V2 extends Bin{
 
-    ArrayList<Bin> bins = new ArrayList<>();
+    static ArrayList<Bin> bins = new ArrayList<>();
 
     public static void main(String[] args){
         int MAXDATA = 1000; // can be subject to change 
@@ -15,20 +15,6 @@ public class binningAlgorithm_V2 extends Bin{
         if(args.length < 2 || args.length > 2 ){
             System.out.println("Usage <input file name> <output file>");
             System.exit(0);
-        }
-
-        //Creating the file to write to 
-        File outFile = null; 
-        try{
-            outFile = new File(args[1]);
-            if (outFile.createNewFile()) {
-                System.out.println("File created: " + outFile.getName());
-              } else {
-                System.out.println("File already exists.");
-              }
-        }catch(IOException e){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
         }
         
         //Opening the file to read from 
@@ -57,13 +43,46 @@ public class binningAlgorithm_V2 extends Bin{
             System.out.println(numbers[i]);
         }
 
-        
+        String data = "";
+        data = data + "Binning Data \n";
+        binning(numbers);
+
+        System.out.println(bins.size());
+        // this prints out the data for the algorithm
+        for (int x = 0; x < bins.size(); x++) {
+            data = data + " Bin: " + x + "\n";
+            for (int i = 0; i < bins.get(x).getList().size(); i++) {
+                data = data + " " + bins.get(x).getList().get(i) + "\n";
+            }
+        }
+
+        for (int k = 0; k < bins.size(); k++) {
+            data = data + " Bin: " + k + "\n Max: " + bins.get(k).getMax() + "\n";
+            data = data + " Min: " + bins.get(k).getMin() + "\n";
+        }
+
+        // Creating the file to write to
+        File outFile = null;
+        FileWriter fr = null;
+        try {
+            outFile = new File(args[1]);
+            if (outFile.createNewFile()) {
+                System.out.println("File created: " + outFile.getName());
+                fr = new FileWriter(outFile);
+                fr.write(data);
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
 
     }
 
     //the binning algorithm 
-    public void binning(Double numbers[]){
+    public static void binning(Double numbers[]){
 
         for(int i = 0; i < numbers.length; i++){
 
@@ -112,15 +131,20 @@ public class binningAlgorithm_V2 extends Bin{
             // start of binning process
 
             recalculate(); // recalc mins and maxs
-            calcNM(); // (re)calc all n's and m's
+            for(int x = 0; x < bins.size(); x++){
+                calcNM(bins.get(x)); // (re)calc all n's and m's
+            }
             // sort all bins
             for (Bin bin : bins) {
                 bin.sort();
             }
 
-            for(int j = 0; j < bins.size(); i++){
+            //goes through each bin to determine if we should split
+            for(int j = 0; j < bins.size(); j++){
                 if(bins.get(j).getList().size() >= 6){
-                    determineSplit(j);
+                    if(determineSplit(j)){
+                        break;
+                    }
                 }
             }
 
@@ -129,29 +153,79 @@ public class binningAlgorithm_V2 extends Bin{
 
     }
     
-    public void calcNM(){
-        for(int i = 0; i < bins.size(); i++){
-            Bin currBin = bins.get(i);
-            Double avg = 0.0;
-            int dividend = 0;
-            for(int j = 0; i < currBin.getList().size(); i++){
-                avg += currBin.getList().get(j);
-                dividend++;
-            }
-            avg = avg/dividend;
-            currBin.setN(Math.abs(avg - currBin.getMin()));
-            currBin.setM(Math.abs(avg - currBin.getMax()));
+    public static void calcNM(Bin currBin){
+        Double avg = 0.0;
+        int dividend = 0;
+        for(int j = 0; j < currBin.getList().size(); j++){
+            avg += currBin.getList().get(j);
+            dividend++;
         }
+        avg = avg/dividend;
+        currBin.setN(Math.abs(avg - currBin.getMin()));
+        currBin.setM(Math.abs(avg - currBin.getMax()));
+        currBin.setTotal(currBin.getN()+currBin.getM());
     }
 
     //the method that will determine whether or not we split the bin
-    public boolean determineSplit(int binIndex){
-        
+    public static boolean determineSplit(int binIndex){
+        ArrayList<Bin> temp = new ArrayList<Bin>();
+        Bin currBin = bins.get((binIndex));
+        int i = 3; //potential splits
+        while(i <= currBin.getList().size() - 3){
+            Bin bin1 = new Bin();
+            Bin bin2 = new Bin();
+            bin1.setList(currBin.getList().subList(0, i));
+            bin2.setList(currBin.getList().subList(i, currBin.getList().size()));
+            bin1.recalMinMax();
+            bin2.recalMinMax();
+            calcNM(bin1);
+            calcNM(bin2);
+            temp.add(bin1);
+            temp.add(bin2);
+            i++;
+        }
+
+        Double avg = 0.0;
+        int count = 0;
+        for(int k = 0; k < bins.size(); k++){
+            avg += bins.get(k).total;
+            count ++;
+        }
+        avg = avg/count;
+
+        Bin bestBin = null;
+        for(int j = 0; j < temp.size(); j++){
+            if(temp.get(j).total < currBin.total){
+                if(temp.get(j).total > avg){
+                    if(bestBin == null){
+                        bestBin = temp.get(j);
+                    }
+                    else if(temp.get(j).total < bestBin.total){
+                        bestBin = temp.get(j);
+                    }
+                }
+            }
+        }
+
+        if(bestBin == null){
+            return false;
+        }
+
+        bins.remove(binIndex);
+        if(temp.indexOf(bestBin) % 2 == 0){
+            bins.add(temp.get(temp.indexOf(bestBin) - 1));
+            bins.add(temp.get(temp.indexOf(bestBin) - 2));
+        }
+        else{
+            bins.add(temp.get(temp.indexOf(bestBin) - 1));
+            bins.add(temp.get(temp.indexOf(bestBin) + 1));
+        }
+
         return true;
     }
 
     //recalculates all the bins mins and maxs
-    public void recalculate(){
+    public static void recalculate(){
 
         for(int i = 0; i < bins.size(); i++){
             bins.get(i).recalMinMax();
