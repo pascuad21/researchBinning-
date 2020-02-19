@@ -75,6 +75,21 @@ public class binningAlgorithm_V2 extends Bin{
             e.printStackTrace();
         }
 
+        //writes to the file 
+        FileWriter fr = null;
+        try{
+            fr = new FileWriter(outFile);
+            fr.write(data);
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            try{
+                fr.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
