@@ -203,7 +203,7 @@ public class binningAlgorithm_V2 extends Bin{
             avg += bins.get(k).getTotal();
             count ++;
         }
-        avg = avg/count;
+        avg = avg/(count*2);
 
         Bin bestBin = null;
         for(int j = 0; j < temp.size(); j++){
@@ -225,12 +225,13 @@ public class binningAlgorithm_V2 extends Bin{
 
         bins.remove(binIndex);
         if(temp.indexOf(bestBin) % 2 == 0){
-            bins.add(temp.get(temp.indexOf(bestBin) - 1));
-            bins.add(temp.get(temp.indexOf(bestBin) - 2));
+            bins.add(temp.get(temp.indexOf(bestBin)));
+            bins.add(temp.get(temp.indexOf(bestBin) + 1));
         }
         else{
+            int test = temp.indexOf(bestBin);
+            bins.add(temp.get(temp.indexOf(bestBin)));
             bins.add(temp.get(temp.indexOf(bestBin) - 1));
-            bins.add(temp.get(temp.indexOf(bestBin) + 1));
         }
 
         return true;
