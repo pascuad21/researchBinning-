@@ -113,7 +113,7 @@ public class binningAlgorithm_V2 extends Bin{
             System.out.println("Size of Bin " + bins.get(0).getList().size());
 
             //we need to wait for at least 6 values
-            if(bins.size() == 1 && i < 10){
+            if(bins.size() == 1 && i < 6){
                 bins.get(0).addNum(numbers[i]);
                 continue;
             }
@@ -185,8 +185,8 @@ public class binningAlgorithm_V2 extends Bin{
     public static boolean determineSplit(int binIndex){
         ArrayList<Bin> temp = new ArrayList<Bin>();
         Bin currBin = bins.get((binIndex));
-        int i = 5; //potential splits
-        while(i <= currBin.getList().size() - 5){
+        int i = 3; //potential splits
+        while(i <= currBin.getList().size() - 3){
             Bin bin1 = new Bin();
             Bin bin2 = new Bin();
             bin1.setList(currBin.getList().subList(0, i));
