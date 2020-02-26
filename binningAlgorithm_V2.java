@@ -36,12 +36,12 @@ public class binningAlgorithm_V2 extends Bin{
         }
 
         //for testing purposes 
-        for(int i = 0; i < numbers.length; i++){
-            if(numbers[i] == null){
-                break;
-            }
-            System.out.println(numbers[i]);
-        }
+        // for(int i = 0; i < numbers.length; i++){
+        //     if(numbers[i] == null){
+        //         break;
+        //     }
+        //     System.out.println(numbers[i]);
+        // }
 
         String data = "";
         data = data + "Binning Data \n";
@@ -125,6 +125,7 @@ public class binningAlgorithm_V2 extends Bin{
 
             //adds the new number before deciding to split or not
             boolean added = false;
+            catchOverlap(numbers[i]);
             for(int k = 0; k < bins.size(); k++){
                 if(numbers[i] > bins.get(k).getMin() && numbers[i] < bins.get(k).getMax()){
                     bins.get(k).addNum(numbers[i]);
@@ -132,6 +133,17 @@ public class binningAlgorithm_V2 extends Bin{
                     break;
                 }
             }
+
+            //catches the values that are in between bins
+            for(int j = 0; j < bins.size(); j++){
+                if((j + 1) != bins.size()){
+                    if(numbers[i] < bins.get(j+1).getMin() && numbers[i] > bins.get(j).getMax()){
+                        bins.get(j).addNum(numbers[i]);
+                        added = true;
+                        break;
+                    }
+                }
+             }
 
             if(!added){
                 if(numbers[i] < bins.get(0).getMin()){
@@ -248,10 +260,80 @@ public class binningAlgorithm_V2 extends Bin{
 
     }
 
-    public static void catchOverlap(){
+    public static void catchOverlap(Double value){
+        //values to see if the value could be within multiple bins
+        int inOneBin = 0;
+        int inAnotherBin = 0;
+        for(int i=0; i < bins.size(); i++){
+            if((value < bins.get(i).getMax()) && (value > bins.get(i).getMin())){
+                if(inOneBin == 0){
+                    inOneBin = i; 
+                }
+                else if(inOneBin != 0){
+                    inAnotherBin = i;
+                }
+            }
+            if(inAnotherBin != 0){
+                break;
+            }
+        }
 
-        
+        if(inAnotherBin != 0){
+            System.out.println("ERROR OVERLAP FAM.");
+            System.out.println("Value: " + value);
+            System.out.println("Bins: " + inOneBin + " " + inAnotherBin);
+            overlapPrintError();
+            System.exit(0);
+        }
+    
+    }
 
+    public static void overlapPrintError(){
+        String data = "";
+        data = data + "Binning Data \n";
+
+        //System.out.println(bins.size());
+        // this prints out the data for the algorithm
+        for (int x = 0; x < bins.size(); x++) {
+            data = data + " Bin: " + x + "\n";
+            for (int i = 0; i < bins.get(x).getList().size(); i++) {
+                data = data + " " + bins.get(x).getList().get(i) + "\n";
+            }
+        }
+
+        for (int k = 0; k < bins.size(); k++) {
+            data = data + " Bin: " + k + "\n Min: " + bins.get(k).getMin() + "\n";
+            data = data + " Max: " + bins.get(k).getMax() + "\n";
+        }
+
+        // Creating the file to write to
+        File outFile = null;
+        try {
+            outFile = new File("errorFile.txt");
+            if (outFile.createNewFile()) {
+                System.out.println("File created: " + outFile.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        //writes to the file 
+        FileWriter fr = null;
+        try{
+            fr = new FileWriter(outFile);
+            fr.write(data);
+        }catch(IOException e){
+            e.printStackTrace();
+        }finally{
+            try{
+                fr.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
     }
     
 }
