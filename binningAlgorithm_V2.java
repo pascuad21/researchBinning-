@@ -57,8 +57,8 @@ public class binningAlgorithm_V2 extends Bin{
         }
 
         for (int k = 0; k < bins.size(); k++) {
-            data = data + " Bin: " + k + "\n Max: " + bins.get(k).getMax() + "\n";
-            data = data + " Min: " + bins.get(k).getMin() + "\n";
+            data = data + " Bin: " + k + "\n Min: " + bins.get(k).getMin() + "\n";
+            data = data + " Max: " + bins.get(k).getMax() + "\n";
         }
 
         // Creating the file to write to
@@ -113,12 +113,15 @@ public class binningAlgorithm_V2 extends Bin{
             System.out.println("Size of Bin " + bins.get(0).getList().size());
 
             //we need to wait for at least 6 values
-            if(bins.size() == 1 && i < 6){
+            if(bins.size() == 1 && i < 10){
                 bins.get(0).addNum(numbers[i]);
                 continue;
             }
 
             //At this point we have 6 numbers in one bin
+
+            //Sort the bins based on min, so bins are in order
+            bins.sort((o1, o2) -> o1.getMin().compareTo(o2.getMin()));
 
             //adds the new number before deciding to split or not
             boolean added = false;
@@ -182,8 +185,8 @@ public class binningAlgorithm_V2 extends Bin{
     public static boolean determineSplit(int binIndex){
         ArrayList<Bin> temp = new ArrayList<Bin>();
         Bin currBin = bins.get((binIndex));
-        int i = 3; //potential splits
-        while(i <= currBin.getList().size() - 3){
+        int i = 5; //potential splits
+        while(i <= currBin.getList().size() - 5){
             Bin bin1 = new Bin();
             Bin bin2 = new Bin();
             bin1.setList(currBin.getList().subList(0, i));
@@ -229,7 +232,6 @@ public class binningAlgorithm_V2 extends Bin{
             bins.add(temp.get(temp.indexOf(bestBin) + 1));
         }
         else{
-            int test = temp.indexOf(bestBin);
             bins.add(temp.get(temp.indexOf(bestBin)));
             bins.add(temp.get(temp.indexOf(bestBin) - 1));
         }
@@ -243,6 +245,12 @@ public class binningAlgorithm_V2 extends Bin{
         for(int i = 0; i < bins.size(); i++){
             bins.get(i).recalMinMax();
         }
+
+    }
+
+    public static void catchOverlap(){
+
+        
 
     }
     
