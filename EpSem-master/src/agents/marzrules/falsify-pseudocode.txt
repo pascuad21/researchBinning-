@@ -1,0 +1,55 @@
+//new pseudo-code to play nice with the tree and current--3/25
+//the intuition is that the "testable" notion from my last attempt at pseudo-coding this is much more easily expressed
+//as a superstition asking "am I descended from something in curr?"
+
+// equivalently, iterate over current, look for the shallowest rule to falsify that could even conceivably be reached
+
+// function which returns a single action in order to "falsify" superstitions
+
+public Move falsify(ArrayList<RuleNode> current) {
+    Move toTake = null;//TODO: make random?
+    int bestDepth = 0; //remember that depth is counting backwards
+    for (int i = 0; i < current.length(); i++) {
+        if ( current[i] instanceof RuleNodeRoot ) { //TODO: I don't think we need to look at 0-deep rules
+            continue;
+        }
+        if (i <= bestDepth){ // because current has one rule of each depth, i also effectively measures depth of parent RuleNode
+            break;
+        }
+        for (Move action : alphabet) {
+            RuleNode superstition = getNextTestable(current[i], action);
+            //TODO: this assumes depth means something more intuitive than what I think is reflected in our implementation
+            if (superstition.depth < bestDepth){ //TODO: superstition.depth + 1 to enforce choice of simplest rules?
+                toTake = action;
+            }
+        }
+    }
+    return toTake;
+}
+
+
+//breadth first search for nearest testable child
+//this function is called twice (in a 2-alphabet) per node in current, which I'd like do more simply but alas alack
+
+public RuleNode getNextTestable(RuleNode parent, Move action){
+    ArrayDeque<RuleNode> q = null;
+    RuleNode p = parent;
+    ArrayList<RuleNode> moveChildren = p.children.get(action);
+    q.addAll(moveChildren); //initial queue is the specific branch of children that the caller of this function was looking at
+    while(queue.length() > 0) {
+        p = queue.remove();
+        //TODO: if p is in current, continue
+        for (Move m : alphabet){
+            moveChildren = p.children.get(m);
+            if (moveChildren.length() == 1){ //i.e. this node has never been expanded
+                return p;
+            }
+            else{
+                queue.addAll(moveChildren);
+            }
+        }
+    }
+}
+
+
+
