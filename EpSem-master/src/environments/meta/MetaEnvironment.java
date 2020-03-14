@@ -79,6 +79,7 @@ public class MetaEnvironment implements IEnvironment {
     public IEnvironment copy() {
         // To be able to do this right we also need IEnvironmentProvider to be cloneable and that's not a priority right now.
         //throw new NotImplementedException();
+        return null;
     }
 
     /**
