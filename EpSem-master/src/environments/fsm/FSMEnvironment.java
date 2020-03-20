@@ -196,7 +196,18 @@ public class FSMEnvironment implements IEnvironment {
     }
 
 	//Discretization testing 4 bins ~Dylan^2
-	private void applyBinSensors(int binToSet, SensorData sensorData) {
+	private void applyBinSensors(int state, SensorData sensorData) {
+
+        //even or odd? Choose from curve 1 or 2
+        //
+        ArrayList<ArrayList<Double>> bins = new ArrayList<ArrayList<Double>>();
+        List<Double> bin1 = Arrays.asList(2.34,43.4,34.55,324.444);
+        ArrayList<Double> bin2 = new ArrayList<Double>();
+        ArrayList<Double> bin3 = new ArrayList<Double>();
+        ArrayList<Double> bin4 = new ArrayList<Double>();
+
+        bins.add((ArrayList)bin1);
+
 		if (this.sensorsToInclude.contains(Sensor.BIN1))
             sensorData.setSensor(Sensor.BIN1.toString(), binToSet == 1);
         if (this.sensorsToInclude.contains(Sensor.BIN2))
