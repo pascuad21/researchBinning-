@@ -2,6 +2,8 @@ package environments.fsm;
 
 import framework.*;
 
+import java.io.File;//!Dylans Test
+import java.io.IOException;//!Dylans Test 
 import java.util.*;
 
 /**
@@ -23,6 +25,9 @@ public class FSMEnvironment implements IEnvironment {
     private int randomSeed;
 
     private int currentState;
+
+    Double numbers[] = new Double[1000];//!Dylan's Test
+    ArrayList<Double> usedNumbers = new ArrayList<Double>();//!Dylans test
     //endregion
 
     //region Constructors
@@ -53,6 +58,26 @@ public class FSMEnvironment implements IEnvironment {
         this.actions = this.transitionTable.getTransitions()[0].keySet().toArray(new Action[0]);
         this.currentState = this.getRandomState();
 
+        //! Opening the file to read from (Begin of Dylans Test)
+        File inFile = null;
+        Scanner sc = null;
+        try {
+            inFile = new File("EpSemTestNums.txt");
+            sc = new Scanner(inFile);
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        // parsing the file
+        int p = 0;
+        while (sc.hasNextDouble()) {
+            numbers[p] = sc.nextDouble();
+            p++;
+        }
+        usedNumbers.add(15.0);
+        //!end Dylans test
+
         //DEBUG: print the transition table
         //System.err.println("Transition table:");
         //System.err.println(this.transitionTable);
@@ -65,6 +90,10 @@ public class FSMEnvironment implements IEnvironment {
         this.sensorsToInclude = toCopy.sensorsToInclude;
         this.actions = toCopy.actions;
         this.currentState = toCopy.currentState;
+        //!Dylans testing
+        this.numbers = toCopy.numbers;
+        this.usedNumbers = toCopy.usedNumbers;
+        //!end of Dylan's testing
     }
 
     //endregion
@@ -145,14 +174,19 @@ public class FSMEnvironment implements IEnvironment {
      * @param sensorData The {@link SensorData} to apply sensors to.
      */
     private void applySensors(int currentState, SensorData sensorData) {
-        if (this.sensorsToInclude.contains(Sensor.IS_EVEN))
-            this.applyEvenOddSensor(currentState, sensorData);
-        if (this.sensorsToInclude.contains(Sensor.MOD_3)){
-            this.applyMod3Sensor(currentState, sensorData);
-        }
-        this.applyWithinNSensors(currentState, sensorData);
-        this.applyNoiseSensors(sensorData);
-        this.applyCactiSensors(currentState, sensorData);
+        //!Uncomment below
+        // if (this.sensorsToInclude.contains(Sensor.IS_EVEN))
+        //     this.applyEvenOddSensor(currentState, sensorData);
+        // if (this.sensorsToInclude.contains(Sensor.MOD_3)){
+        //     this.applyMod3Sensor(currentState, sensorData);
+        // }
+        // this.applyWithinNSensors(currentState, sensorData);
+        // this.applyNoiseSensors(sensorData);
+        // this.applyCactiSensors(currentState, sensorData);
+        //!Uncomment above
+
+        //!Dylans testing
+        this.applyBinSensors(currentState, sensorData);
     }
 
     private void applyEvenOddSensor(int state, SensorData sensorData) {
@@ -195,28 +229,63 @@ public class FSMEnvironment implements IEnvironment {
             sensorData.setSensor(Sensor.CACTUS9.toString(), state == 8);
     }
 
-	//Discretization testing 4 bins ~Dylan^2
+	//!Discretization testing 4 bins ~Dylan^2
 	private void applyBinSensors(int state, SensorData sensorData) {
 
-        //even or odd? Choose from curve 1 or 2
-        //
-        ArrayList<ArrayList<Double>> bins = new ArrayList<ArrayList<Double>>();
-        List<Double> bin1 = Arrays.asList(2.34,43.4,34.55,324.444);
-        ArrayList<Double> bin2 = new ArrayList<Double>();
-        ArrayList<Double> bin3 = new ArrayList<Double>();
-        ArrayList<Double> bin4 = new ArrayList<Double>();
+        int index = 0;
+        //Take random num check if <= 5 then its bin 0
+        Double testingNum = 0.0;
+        Double numberToUse = 0.0;
+        if(state % 2 == 0){//in even state
+            //go through numbers list and find one that is in the "even" curve
+            while(index < this.numbers.length){
+                if(index == 200){
+                    this.usedNumbers.clear();
+                    index = 0;
+                }
+                testingNum = this.numbers[index];
+                //System.out.println("Testing Num: " + index);
+                if(testingNum <= 5.0 && !this.usedNumbers.contains(testingNum)){
+                    numberToUse = testingNum;
+                    this.usedNumbers.add(testingNum);
+                    break;
+                }
+                index++;
+            }
+        }
+        else{//in odd state
+            // go through numbers list and find one that is in the "even" curve
+            while(index < this.numbers.length){
+                if (index == 200) {
+                    this.usedNumbers.clear();
+                    index = 0;
+                }
+                testingNum = this.numbers[index];
+                //System.out.println("Testing Num ODD: " + index);
+                if(testingNum > 5.0 && !this.usedNumbers.contains(testingNum)){
+                    numberToUse = testingNum;
+                    this.usedNumbers.add(testingNum);
+                    break;
+                }
+                index++;
+            }
+        }
+        //If Even(bin 0-1) or Odd(bin 2-3) state check randome num pulled
+        //fits this description if not get another one
 
-        bins.add((ArrayList)bin1);
+        //check what bin 1-4 it would be in (0-2.5)(2.5-5.0)(5.0-7.5)(7.5-10.0)
 
 		if (this.sensorsToInclude.contains(Sensor.BIN1))
-            sensorData.setSensor(Sensor.BIN1.toString(), binToSet == 1);
+            sensorData.setSensor(Sensor.BIN1.toString(), numberToUse >= 0.0 && numberToUse <= 2.5 );
         if (this.sensorsToInclude.contains(Sensor.BIN2))
-            sensorData.setSensor(Sensor.BIN2.toString(), binToSet == 2);
+            sensorData.setSensor(Sensor.BIN2.toString(), numberToUse > 2.5 && numberToUse <= 5.0);
         if (this.sensorsToInclude.contains(Sensor.BIN3))
-            sensorData.setSensor(Sensor.BIN3.toString(), binToSet == 3);
+            sensorData.setSensor(Sensor.BIN3.toString(), numberToUse > 5.0 && numberToUse <= 7.5);
         if (this.sensorsToInclude.contains(Sensor.BIN4))
-            sensorData.setSensor(Sensor.BIN4.toString(), binToSet == 4);
-	}
+            sensorData.setSensor(Sensor.BIN4.toString(), numberToUse > 7.5 && numberToUse <= 10.0);
+    }
+    
+    //!End Dylans Discretization
 
     private void applyWithinNSensors(int state, SensorData sensorData){
 //        for(int i = 0; i< 20; i++){
@@ -238,11 +307,13 @@ public class FSMEnvironment implements IEnvironment {
         IS_EVEN,
         MOD_3,
 
+        //!Dylans Testng
 		/** Identifies the sensor that determines which bin the generated number is in */
 		BIN1,
 		BIN2,
 		BIN3,
-		BIN4,
+        BIN4,
+        //!End Dylans Testing
 
         /** Identifies the sensor that turns on for exactly one state in the FSM */
         CACTUS1, //On if in state 0
@@ -293,12 +364,13 @@ public class FSMEnvironment implements IEnvironment {
                 CACTUS7,
                 CACTUS8,
                 CACTUS9);
-		
+		//!Dylans Testing
 		//Discretization Testing Dylan^2
 		public static final EnumSet<Sensor> BIN_SENSORS = EnumSet.of(BIN1,
 				BIN2,
 				BIN3,
-				BIN4);
+                BIN4);
+        //!End of Dylans Testing
 
         public static Sensor fromString(String in){
             for(Sensor s : Sensor.values()){
