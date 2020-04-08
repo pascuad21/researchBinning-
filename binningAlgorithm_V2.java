@@ -139,6 +139,7 @@ public class binningAlgorithm_V2 extends Bin{
                 if((j + 1) != bins.size()){
                     if(numbers[i] < bins.get(j+1).getMin() && numbers[i] > bins.get(j).getMax()){
                         bins.get(j).addNum(numbers[i]);
+                        //maybe change this to put num in bin thats closer
                         added = true;
                         break;
                     }
